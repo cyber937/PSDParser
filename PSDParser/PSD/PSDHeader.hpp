@@ -9,37 +9,42 @@
 #ifndef PDSHeader_hpp
 #define PDSHeader_hpp
 
+#include <fstream>
 #include <stdio.h>
 #include <string>
-#include "Utilities.hpp"
 
 using namespace std;
 
 class PSDHeader {
-    char sign[4];
-    char version[2];
-    char reserved[6];
-    char channel[2];
-    char height[4];
-    char width[4];
-    char depth[2];
-    char colorMode[2];
+    
+private:
+    
+    string _sign; //4
+    int _version; //2
+    int _reserved; //6
+    int _channel; //2
+    int _height; //4
+    int _width;  //4
+    int _depth; //2
+    int _colorMode; //2
     
 public:
     
-    std::string getSign();
+    string sign();
     
-    int getVersion();
+    int version();
     
-    int getChannel();
+    int channel();
     
-    int getHeight();
+    int height();
     
-    int getWidth();
+    int width();
     
-    int getDepth();
+    int depth();
     
-    int getColorMode();
+    int colorMode();
+    
+    void load(ifstream& inf);
     
     void printData();
 };

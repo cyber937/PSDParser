@@ -9,15 +9,20 @@
 #ifndef PSDColorMode_hpp
 #define PSDColorMode_hpp
 
+#include <fstream>
 #include <stdio.h>
-#include "Utilities.hpp"
+
+using namespace std;
 
 class PSDColorMode {
-    char length[4];
+    
+private:
+    int _length;
     
 public:
+    int length();
     
-    int getLength();
+    void load(ifstream& inf);
     
     void printData();
 };

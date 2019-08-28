@@ -31,21 +31,21 @@ int main(int argc, const char * argv[]) {
     
     file.open("/Users/kiyoshi/Desktop/Untitled-1.psd", ios::binary | ios::in);
     
-    file.read((char*)&psdHeader, sizeof(PSDHeader));
-    
+    // Header
+    psdHeader.load(file);
     psdHeader.printData();
-    
-    file.read((char*)&psdColorMode, sizeof(PSDColorMode));
-    
+
+    // Color Mode
+    psdColorMode.load(file);
     psdColorMode.printData();
     
     printf("Current Position ... %i", int(file.tellg()));
     
     PSDImgResPerser psdImgResPerser;
-    psdImgResPerser.startParse(&file);
+    psdImgResPerser.startParse(file);
     
     printf("\nCurrent Positiong ... %i\n\n", int(file.tellg()));
     
     PSDLayerParser psdLayerPasrse;
-    psdLayerPasrse.startParse(&file, psdHeader.getVersion());
+    psdLayerPasrse.startParse(file, psdHeader.version());
 }

@@ -7,13 +7,17 @@
 //
 
 #include "PSDColorMode.hpp"
+#include "Utilities.hpp"
 
+int PSDColorMode::length() {
+    return _length;
+}
 
-int PSDColorMode::getLength(void) {
-    return IntFromBytes(length, 4);
+void PSDColorMode::load(ifstream& inf) {
+   _length =  IntFromBinary(inf, 4);
 }
 
 void PSDColorMode::printData(void) {
     printf("\n--- Color Mode Data Section  ---\n");
-    printf("Data Length ... %i\n", getLength());
+    printf("Data Length ... %i\n", length());
     }

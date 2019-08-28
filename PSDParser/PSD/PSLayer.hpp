@@ -14,17 +14,18 @@
 #include <cstdlib>
 #include <vector>
 
-#include "Utilities.hpp"
-
 using namespace std;
 
 class LayerRect {
-    char _top[4];
-    char _left[4];
-    char _bottom[4];
-    char _right[4];
+    int _top; //4
+    int _left; //4
+    int _bottom; //4
+    int _right;  //4
     
 public:
+    
+    void load(ifstream& inf);
+    
     int top();
     
     int left();
@@ -56,7 +57,7 @@ class PSDLayerParser {
     
 public:
     
-    void startParse(ifstream *file, int version);
+    void startParse(ifstream& file, int version);
 };
 
 

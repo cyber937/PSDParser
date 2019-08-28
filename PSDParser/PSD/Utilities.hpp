@@ -9,10 +9,17 @@
 #ifndef Utilities_hpp
 #define Utilities_hpp
 
+#include <fstream>
 #include <stdio.h>
+
+using namespace std;
 
 int IntFromBytes(const char *bytes, int len);
 
 int SignedIntFromBytes(const char *bytes, int len);
+
+int IntFromBinary(ifstream& inf, int len);
+
+int SignedIntFromBinary(ifstream& inf, int len);
 
 #endif /* Utilities_hpp */

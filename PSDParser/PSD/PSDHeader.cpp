@@ -7,42 +7,64 @@
 //
 
 #include "PSDHeader.hpp"
+#include "Utilities.hpp"
 
-string PSDHeader::getSign() {
-    return PSDHeader::sign;
+
+string PSDHeader::sign() {
+    return _sign;
 }
 
-int PSDHeader::getVersion() {
-    return IntFromBytes(version, 2);
+int PSDHeader::version() {
+    return _version;
 }
 
-int PSDHeader::getChannel() {
-    return IntFromBytes(channel, 2);
+int PSDHeader::channel() {
+    return _channel;
 }
 
-int PSDHeader::getHeight() {
-    return IntFromBytes(height, 4);
+int PSDHeader::height() {
+    return _height;
 }
 
-int PSDHeader::getWidth() {
-    return IntFromBytes(width, 4);
+int PSDHeader::width() {
+    return _width;
 }
 
-int PSDHeader::getDepth() {
-    return IntFromBytes(depth, 2);
+int PSDHeader::depth() {
+    return _depth;
 }
 
-int PSDHeader::getColorMode() {
-    return IntFromBytes(colorMode, 2);
+int PSDHeader::colorMode() {
+    return _colorMode;
+}
+
+void PSDHeader::load(ifstream& inf) {
+    
+    inf.read(&_sign[0], 4);
+    
+    _version = IntFromBinary(inf, 2);
+
+    _reserved = IntFromBinary(inf, 6);
+    
+    _channel = IntFromBinary(inf, 2);
+    
+    _height =IntFromBinary(inf, 4);
+    
+    _width = IntFromBinary(inf, 4);
+    
+    _depth = IntFromBinary(inf, 2);
+    
+    _colorMode = IntFromBinary(inf, 2);
+    
 }
 
 void PSDHeader::printData() {
     printf("\n--- File Header Section  ---\n");
-    printf("Signature ... %s\n", getSign().c_str());
-    printf("Version ... %i\n", getVersion());
-    printf("Number of Channel ... %i\n", getChannel());
-    printf("Height ... %i\n", getHeight());
-    printf("Width ... %i\n", getWidth());
-    printf("Depth ... %i\n", getDepth());
-    printf("Color Mode ... %i\n", getColorMode());
+    printf("Signature ... %s\n", sign().c_str());
+    printf("Version ... %i\n", version());
+    printf("Number of Channel ... %i\n", channel());
+    printf("Height ... %i\n", height());
+    printf("Width ... %i\n", width());
+    printf("Depth ... %i\n", depth());
+    printf("Color Mode ... %i\n", colorMode());
 }

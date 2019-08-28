@@ -7,68 +7,62 @@
 //
 
 #include "PSDImgRes.hpp"
+#include "Utilities.hpp"
 
-std::string PSDImgResBlockHeder::getSign() {
-    return sign;
+string PSDImgResBlockHeder::sign() {
+    return _sign;
 }
 
-int PSDImgResBlockHeder::getUI() {
-    return IntFromBytes(ui, 2);
+int PSDImgResBlockHeder::ui() {
+    
+    return _ui;
 }
 
+void PSDImgResBlockHeder::load(ifstream& inf) {
+    
+    inf.read(&_sign[0], 4);
+    
+    _ui = IntFromBinary(inf, 2);
+}
 
-void PSDImgResPerser::startParse(ifstream *file) {
+void PSDImgResPerser::startParse(ifstream &inf) {
     
-    char buffer[4];
-    
-    file->read(buffer, 4);
-    length = IntFromBytes(buffer, 4);
+    length = IntFromBinary(inf, 4);
     
     printf("\n--- Image Resourses Section  ---\n");
     printf("Data Length ... %i\n\n", length);
     
-    int lastPosition = length + int(file->tellg());
+    int lastPosition = length + int(inf.tellg());
     
-    int pos = int(file->tellg());
+    streampos pos = inf.tellg();
     
     while (lastPosition !=  pos) {
         
-        char * buffSign = (char *)malloc(4);
-        file->read(buffSign, 4);
-        
-        char * buffUI = (char *)malloc(2);
-        file->read(buffUI, 2);
-        int buffUI_int = IntFromBytes(buffUI, 2);
+        PSDImgResBlockHeder imgResBlockHeader;
+        imgResBlockHeader.load(inf);
 
-        //PSDImgResBlockHeder psdImgResBlockHeder;
-        //file->read((char*)&psdImgResBlockHeder, sizeof(PSDImgResBlockHeder));
-        printf("UI ... %i\n", buffUI_int);
+        printf("UI ... %i\n", imgResBlockHeader.ui());
         
-        char bufStr;
-        file->get(bufStr);
-        int bufStr_int = int(bufStr);
+        int bufStr_int = IntFromBinary(inf, 1);
         
         if (bufStr_int != 0) {
             if (bufStr_int % 2 == 0)
                 bufStr_int ++;
             
             char name[bufStr_int];
-            file->read(name, bufStr_int);
+            inf.read(name, bufStr_int);
             printf("Name ... %s\n", name);
             
         } else {
-            file->seekg(int(file->tellg()) + 1);
+            inf.seekg(1, inf.cur);
         }
         
-        char bufDataSize[4];
-        file->read(bufDataSize, 4);
-        
-        int bufDataSize_int = IntFromBytes(bufDataSize, 4);
+        int bufDataSize_int = IntFromBinary(inf, 4);
         if (bufDataSize_int % 2 != 0)
             bufDataSize_int ++;
         
-        file->seekg(int(file->tellg()) + bufDataSize_int);
+        inf.seekg(bufDataSize_int, inf.cur);
         
-        pos = int(file->tellg());
+        pos = inf.tellg();
     }
 }

@@ -12,28 +12,33 @@
 #include <stdio.h>
 #include <string>
 #include <fstream>
-#include "Utilities.hpp"
 
 using namespace std;
 
 class PSDImgResBlockHeder {
-    char sign[4];
-    char ui[2];
+    
+private:
+    
+    string _sign;
+    int _ui;
     
 public:
     
-    std::string getSign();
+    void load(ifstream& inf);
     
-    int getUI();
+    string sign();
+    
+    int ui();
 };
 
 
 class PSDImgResPerser {
+    
     int length;
     
 public:
     
-    void startParse(ifstream *file);
+    void startParse(ifstream& inf);
     
 };
 

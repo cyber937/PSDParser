@@ -33,3 +33,15 @@ int SignedIntFromBytes(const char *bytes, int len) {
     
     return intValue;
 }
+
+int IntFromBinary(ifstream& inf, int len) {
+    char buffer[100];
+    inf.read(buffer, len);
+    return IntFromBytes(buffer, len);
+}
+
+int SignedIntFromBinary(ifstream& inf, int len) {
+    char buffer[100];
+    inf.read(buffer, len);
+    return SignedIntFromBytes(buffer, len);
+}
