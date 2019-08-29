@@ -25,11 +25,11 @@ int main(int argc, const char * argv[]) {
     PSDHeader psdHeader;
     PSDColorMode psdColorMode;
     
-    //file.open("/Users/kiyoshi/Desktop/PSVR_IMMERSED_FNAF_KEYART_sRGB_COMP_LAYERED_004.psb", ios::binary | ios::in);
+    file.open("/Users/kiyoshi/Desktop/PSVR_IMMERSED_FNAF_KEYART_sRGB_COMP_LAYERED_004.psb", ios::binary | ios::in);
     
     //file.open("/Users/kiyoshi/Desktop/test.psd", ios::binary | ios::in);
     
-    file.open("/Users/kiyoshi/Desktop/Untitled-1.psd", ios::binary | ios::in);
+    //file.open("/Users/kiyoshi/Desktop/Untitled-1.psd", ios::binary | ios::in);
     
     // Header
     psdHeader.load(file);
