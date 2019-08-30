@@ -53,6 +53,49 @@ int PSDLayer::process(vector<PSDLayer> layerList, int count, int level) {
     }
     
     return positionOfList;
+}
+
+
+void PSDLayer::makeJSON(string& jsonString, int level) {
+    
+    if (level == 0) {
+        jsonString = jsonString + "[\n";
+    }
+    
+    string pad1 = "";
+    string pad2 = "     ";
+    
+    for (int p = 0; p < level; p++) {
+        pad1 = pad1 + "     ";
+        pad2 = pad2 + "     ";
+    }
+    
+    for (int i = 0; i < this->children.size(); i++) {
+        
+        jsonString = jsonString + pad1 + "{\n";
+        jsonString = jsonString + pad2 + "\"name\" : " + "\"" + this->children[i].name.c_str() + "\",\n" ;
+        jsonString = jsonString + pad2 + "\"type\" : " + to_string(this->children[i].type) + ",\n" ;
+        
+        if (this->children[i].children.size() == 0) {
+            jsonString = jsonString + pad2 + "\"children\" : []\n";
+        } else {
+            jsonString = jsonString + pad2 + "\"children\" :[\n";
+            int nextLevel = level + 1;
+            this->children[i].makeJSON(jsonString, nextLevel);
+            jsonString = jsonString + pad2 +"]\n";
+        }
+        
+        if (i == this->children.size() - 1) {
+            jsonString = jsonString + pad1 + "}\n";
+        } else {
+            jsonString = jsonString + pad1 + "},\n";
+        }
+    
+    }
+    
+    if (level == 0) {
+        jsonString = jsonString + "]";
+    }
     
 }
 
@@ -123,10 +166,8 @@ void PSDLayerParser::startParse(ifstream& inf, int version) {
         // Length of Data
         int bufLenBlen_int = IntFromBinary(inf, 4);
         inf.seekg(bufLenBlen_int, inf.cur);
-        
-        streampos curPos = inf.tellg();
-        
-        while (endPointOfLayerRecord != curPos) {
+
+        while (endPointOfLayerRecord != inf.tellg()) {
             
             // Name --- Pascal string
             int bufStr_int = IntFromBinary(inf, 1);
@@ -139,64 +180,69 @@ void PSDLayerParser::startParse(ifstream& inf, int version) {
             
             bufStr_int --;
             
+            string layerName(bufStr_int, ' ');
+            inf.read(&layerName[0], bufStr_int);
+            //printf("%i, Name ... %s\n", i, layerName.c_str());
             
-            char * buffName = (char*) malloc(bufStr_int);
-            inf.read(buffName, bufStr_int);
-            printf("%i, Name ... %s\n", i, buffName);
-            
-            psdLayer.name = buffName;
-            
-            curPos = int(inf.tellg());
-            
-            while (endPointOfLayerRecord != curPos) {
-                char * bufAddLayerSign = (char*) malloc(4);
-                inf.read(bufAddLayerSign, 4);
+            psdLayer.name = layerName;
+
+            while (endPointOfLayerRecord != inf.tellg()) {
                 
-                char * bufAddLayerKey = (char*) malloc(4);
-                inf.read(bufAddLayerKey, 4);
+                string layerSign(4, ' ');
+                inf.read(&layerSign[0], 4);
+                
+                string layerKey(4, ' ');
+                inf.read(&layerKey[0], 4);
                 
                 int addLayerDataLen = 4;
                 
-                
-                
-                if (strncmp(bufAddLayerKey, "LMsk", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "Lr16", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "Lr32", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "Layr", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "Mt16", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "Mt32", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "Mtrn", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "Alph", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "FMsk", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "lnk2", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "FEid", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "FXid", 4) == 0 ||
-                    strncmp(bufAddLayerKey, "PxSD", 4) == 0) {
+                if (!layerKey.compare("LMsk") ||
+                    !layerKey.compare("Lr16") ||
+                    !layerKey.compare("Lr32") ||
+                    !layerKey.compare("Layr") ||
+                    !layerKey.compare("Mt16") ||
+                    !layerKey.compare("Mt32") ||
+                    !layerKey.compare("Mtrn") ||
+                    !layerKey.compare("Alph") ||
+                    !layerKey.compare("FMsk") ||
+                    !layerKey.compare("lnk2") ||
+                    !layerKey.compare("FEid") ||
+                    !layerKey.compare("FXid") ||
+                    !layerKey.compare("PxSD")) {
                     
                     addLayerDataLen += 4;
                 }
                 
                 int addLayerData_int = IntFromBinary(inf, addLayerDataLen);
                 
-                if (strncmp(bufAddLayerKey, "lsct", 4) == 0) {
+                // Layer Group Information
+                
+                if (!layerKey.compare("lsct")) {
                     int sectionDividerSetting_int = IntFromBinary(inf, 4);
                     
                     psdLayer.type = sectionDividerSetting_int;
                     
                     if (sectionDividerSetting_int == 1 || sectionDividerSetting_int == 2) {
                         folderSection++;
-                        printf("%i - Folder\n\n", folderSection);
+                        //printf("%i - Folder\n\n", folderSection);
                     } else if (sectionDividerSetting_int == 3) {
                         hiddenSection++;
-                        printf("%i - Hidden\n\n", hiddenSection);
+                        //printf("%i - Hidden\n\n", hiddenSection);
                     }
+                    inf.seekg(addLayerData_int - 4, inf.cur);
+                } else {//if (!layerKey.compare("TySh")) {
                     
-                    curPos = (addLayerData_int - 4) + int(inf.tellg());
-                    inf.seekg(curPos);
-                } else {
-                    curPos = addLayerData_int + int(inf.tellg());
-                    inf.seekg(curPos);
+                //    int fontVerion = IntFromBinary(inf, 2);
+                    
+                //    printf("current point ... %i\n", int(inf.tellg()));
+                           
+                //    printf("version ... %i\n", fontVerion);
+                    
+                //} else {
+                    inf.seekg(addLayerData_int, inf.cur);
                 }
+                
+
             }
             
             layers.push_back(psdLayer);
@@ -204,9 +250,22 @@ void PSDLayerParser::startParse(ifstream& inf, int version) {
     }
     
     PSDLayer root;
+    root.name = "root";
+    root.type = 3;
     
     root.process(layers, 0, 0);
     
-    printf("Hidden Section%i\n", hiddenSection);
+    //printf("Hidden Section%i\n", hiddenSection);
     
+    string jsonString;
+    
+    root.makeJSON(jsonString);
+    
+    cout << jsonString << endl;
+    
+    //cin >> jsonString;
+    
+    ofstream out("/Users/kiyoshi/Desktop/test2.json");
+    out << jsonString;
+    out.close();
 }

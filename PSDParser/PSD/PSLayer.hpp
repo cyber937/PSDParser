@@ -9,18 +9,17 @@
 #ifndef PSLayer_hpp
 #define PSLayer_hpp
 
+#include <iostream>
 #include <stdio.h>
 #include <fstream>
 #include <cstdlib>
 #include <vector>
+#include <string>
 
 using namespace std;
 
 class LayerRect {
-    int _top; //4
-    int _left; //4
-    int _bottom; //4
-    int _right;  //4
+    int _top, _left, _bottom, _right;
     
 public:
     
@@ -47,17 +46,20 @@ public:
     vector<PSDLayer> children;
     
     int process(vector<PSDLayer> layerList, int count, int level);
+    
+    //void makeJSON(string& jsonString);
+    
+    void makeJSON(string& jsonString, int level = 0);
 };
 
 class PSDLayerParser {
     
-    int lengthSec;
-    int lengthInfo;
-    int numLayer;
+    int lengthSec, lengthInfo, numLayer;
     
 public:
     
     void startParse(ifstream& file, int version);
+    
 };
 
 
