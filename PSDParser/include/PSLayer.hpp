@@ -12,7 +12,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <fstream>
-#include <cstdlib>
 #include <vector>
 #include <string>
 
@@ -58,7 +57,7 @@ class PSDLayerParser {
     
 public:
     
-    void startParse(ifstream& file, int version);
+    string getLayerJSON(ifstream& file, int version);
     
 };
 

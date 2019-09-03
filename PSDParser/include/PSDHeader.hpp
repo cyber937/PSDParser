@@ -19,14 +19,14 @@ class PSDHeader {
     
 private:
     
-    string _sign; //4
-    int _version; //2
-    int _reserved; //6
-    int _channel; //2
-    int _height; //4
-    int _width;  //4
-    int _depth; //2
-    int _colorMode; //2
+    string _sign;
+    int _version;
+    int _reserved;
+    int _channel;
+    int _height;
+    int _width;
+    int _depth;
+    int _colorMode;
     
 public:
     

@@ -29,8 +29,8 @@ void PSDImgResPerser::startParse(ifstream &inf) {
     
     length = IntFromBinary(inf, 4);
     
-    printf("\n--- Image Resourses Section  ---\n");
-    printf("Data Length ... %i\n\n", length);
+    //printf("\n--- Image Resourses Section  ---\n");
+    //printf("Data Length ... %i\n\n", length);
     
     int lastPosition = length + int(inf.tellg());
     
@@ -41,7 +41,7 @@ void PSDImgResPerser::startParse(ifstream &inf) {
         PSDImgResBlockHeder imgResBlockHeader;
         imgResBlockHeader.load(inf);
 
-        printf("UI ... %i\n", imgResBlockHeader.ui());
+        //printf("UI ... %i\n", imgResBlockHeader.ui());
         
         int bufStr_int = IntFromBinary(inf, 1);
         
@@ -51,7 +51,7 @@ void PSDImgResPerser::startParse(ifstream &inf) {
             
             char name[bufStr_int];
             inf.read(name, bufStr_int);
-            printf("Name ... %s\n", name);
+            //printf("Name ... %s\n", name);
             
         } else {
             inf.seekg(1, inf.cur);

@@ -100,20 +100,20 @@ void PSDLayer::makeJSON(string& jsonString, int level) {
 }
 
 
-void PSDLayerParser::startParse(ifstream& inf, int version) {
+string PSDLayerParser::getLayerJSON(ifstream& inf, int version) {
     
 //// Layer Section
     
     int sizeOfBuffer = 4 * version;
     lengthSec = IntFromBinary(inf, sizeOfBuffer);
 
-    printf("Section Length ... %i\n\n", lengthSec);
+    //printf("Section Length ... %i\n\n", lengthSec);
     
     //// Layer info
 
     lengthInfo = IntFromBinary(inf, sizeOfBuffer);
     
-    printf("Info Length ... %i\n\n", lengthInfo);
+    //printf("Info Length ... %i\n\n", lengthInfo);
     
     //// # of Layers
     
@@ -122,7 +122,7 @@ void PSDLayerParser::startParse(ifstream& inf, int version) {
     if (numLayer < 0)
         numLayer = (numLayer * -1);
 
-    printf("# Layer ... %i\n\n", numLayer);
+    //printf("# Layer ... %i\n\n", numLayer);
 
     //// Layer Record;
     
@@ -254,18 +254,11 @@ void PSDLayerParser::startParse(ifstream& inf, int version) {
     root.type = 3;
     
     root.process(layers, 0, 0);
-    
-    //printf("Hidden Section%i\n", hiddenSection);
-    
+
     string jsonString;
     
     root.makeJSON(jsonString);
     
-    cout << jsonString << endl;
+    return jsonString;
     
-    //cin >> jsonString;
-    
-    ofstream out("/Users/kiyoshi/Desktop/test2.json");
-    out << jsonString;
-    out.close();
 }
