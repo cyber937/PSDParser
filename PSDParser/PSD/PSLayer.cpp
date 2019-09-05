@@ -59,6 +59,8 @@ int PSDLayer::process(vector<PSDLayer> layerList, int count, int level) {
 void PSDLayer::makeJSON(string& jsonString, int level) {
     
     if (level == 0) {
+        jsonString = jsonString + "{\"layer\":\n";
+        jsonString = jsonString + "{\"name\": \"root\",\n \"children\":\n";
         jsonString = jsonString + "[\n";
     }
     
@@ -72,17 +74,17 @@ void PSDLayer::makeJSON(string& jsonString, int level) {
     
     for (int i = 0; i < this->children.size(); i++) {
         
-        jsonString = jsonString + pad1 + "{\n";
-        jsonString = jsonString + pad2 + "\"name\" : " + "\"" + this->children[i].name.c_str() + "\",\n" ;
+        jsonString = jsonString + pad1 + "{\"layer\":\n";
+        jsonString = jsonString + pad2 + "{\"name\" : " + "\"" + this->children[i].name.c_str() + "\",\n" ;
         jsonString = jsonString + pad2 + "\"type\" : " + to_string(this->children[i].type) + ",\n" ;
         
         if (this->children[i].children.size() == 0) {
-            jsonString = jsonString + pad2 + "\"children\" : []\n";
+            jsonString = jsonString + pad2 + "\"children\" : []}\n";
         } else {
             jsonString = jsonString + pad2 + "\"children\" :[\n";
             int nextLevel = level + 1;
             this->children[i].makeJSON(jsonString, nextLevel);
-            jsonString = jsonString + pad2 +"]\n";
+            jsonString = jsonString + pad2 +"]}\n";
         }
         
         if (i == this->children.size() - 1) {
@@ -90,11 +92,11 @@ void PSDLayer::makeJSON(string& jsonString, int level) {
         } else {
             jsonString = jsonString + pad1 + "},\n";
         }
-    
+        
     }
     
     if (level == 0) {
-        jsonString = jsonString + "]";
+        jsonString = jsonString + "]}}";
     }
     
 }
@@ -132,6 +134,7 @@ string PSDLayerParser::getLayerJSON(ifstream& inf, int version) {
     PSDLayer pasLayer;
     
     vector<PSDLayer> layers;
+    vector<string> fonts;
     
     for (int i = 1; i <= numLayer; i++) {
         
@@ -230,15 +233,65 @@ string PSDLayerParser::getLayerJSON(ifstream& inf, int version) {
                         //printf("%i - Hidden\n\n", hiddenSection);
                     }
                     inf.seekg(addLayerData_int - 4, inf.cur);
-                } else {//if (!layerKey.compare("TySh")) {
+                } else if (!layerKey.compare("TySh")) {
                     
-                //    int fontVerion = IntFromBinary(inf, 2);
+                    int lastPositionOfTysh = addLayerData_int + int(inf.tellg());
                     
-                //    printf("current point ... %i\n", int(inf.tellg()));
-                           
-                //    printf("version ... %i\n", fontVerion);
-                    
-                //} else {
+                    char c;
+                    while (inf.get(c)) {
+                        
+                        if (inf.tellg() == lastPositionOfTysh) {
+                            break;
+                        }
+                        
+                        if (c == 'F') {
+                            string fontSet(6, ' ');
+                            inf.read(&fontSet[0], 6);
+                            if (!fontSet.compare("ontSet")) {
+                                
+                                inf.seekg(20, inf.cur);
+                                
+                                int fontSetStartPosition = int(inf.tellg());
+                                int fontSetEndPosition = 0;
+                                
+                                while (inf.get(c)) {
+                                    if (c == ')') {
+                                        fontSetEndPosition = int(inf.tellg()) - 1;
+                                        break;
+                                    }
+                                }
+                                
+                                int lengthOfFontSet = (fontSetEndPosition - fontSetStartPosition) / 2;
+                                
+                                inf.seekg(fontSetStartPosition);
+                                
+                                string fontStyle;
+                                
+                                for (int i = 0; i < lengthOfFontSet; i++) {
+                                    char buffer[2];
+                                    inf.read(buffer, 2);
+                                    unsigned char result = buffer[0] << 4 | buffer[1];
+                                    UnicodeString uni_str((UChar32)result);
+                                    string str;
+                                    uni_str.toUTF8String(str);
+                                    fontStyle = fontStyle + str;
+                                }
+                                
+                                bool hasFontStyle = false;
+                                
+                                for (int i = 0; i < fonts.size(); i++) {
+                                    if (!fontStyle.compare(fonts[i])) {
+                                        hasFontStyle = true;
+                                    }
+                                }
+                                
+                                if (!hasFontStyle) {
+                                    fonts.push_back(fontStyle);
+                                }
+                            }
+                        }
+                    }
+                } else {
                     inf.seekg(addLayerData_int, inf.cur);
                 }
                 
@@ -258,6 +311,22 @@ string PSDLayerParser::getLayerJSON(ifstream& inf, int version) {
     string jsonString;
     
     root.makeJSON(jsonString);
+    
+    jsonString = "{ \"layers\": \n" + jsonString;
+    
+    if (fonts.size() > 0) {
+        jsonString = jsonString + ",\n\"fonts\" : [ ";
+        for (int i = 0; i < fonts.size(); i++) {
+            jsonString = jsonString + "\"" + fonts[i].c_str() + "\"";
+            if (i < fonts.size() - 1) {
+                jsonString = jsonString + ",";
+            }
+        }
+        
+        jsonString = jsonString + "]";
+    }
+    
+    jsonString = jsonString + "}";
     
     return jsonString;
     
