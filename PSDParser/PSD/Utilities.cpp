@@ -45,3 +45,20 @@ int SignedIntFromBinary(ifstream& inf, int len) {
     inf.read(buffer, len);
     return SignedIntFromBytes(buffer, len);
 }
+
+string stringFromUnicode(ifstream& inf, int len) {
+    
+    string uniString;
+    
+    for (int i = 0; i < len; i++) {
+        char buffer[2];
+        inf.read(buffer, 2);
+        unsigned char result = buffer[0] << 4 | buffer[1];
+        UnicodeString uni_str((UChar32)result);
+        string str;
+        uni_str.toUTF8String(str);
+        uniString = uniString + str;
+    }
+    
+    return uniString;
+}

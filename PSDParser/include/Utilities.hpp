@@ -11,8 +11,12 @@
 
 #include <fstream>
 #include <stdio.h>
+#include <string>
+
+#include <unicode/unistr.h>
 
 using namespace std;
+using namespace icu;
 
 int IntFromBytes(const char *bytes, int len);
 
@@ -21,5 +25,7 @@ int SignedIntFromBytes(const char *bytes, int len);
 int IntFromBinary(ifstream& inf, int len);
 
 int SignedIntFromBinary(ifstream& inf, int len);
+
+string stringFromUnicode(ifstream& inf, int len);
 
 #endif /* Utilities_hpp */
