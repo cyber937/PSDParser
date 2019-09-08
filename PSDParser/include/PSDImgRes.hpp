@@ -38,7 +38,7 @@ class PSDImgResPerser {
     
 public:
     
-    void startParse(ifstream& inf);
+    void startParse(ifstream& inf, string& ICC_Profile, string& DPI);
     
 };
 

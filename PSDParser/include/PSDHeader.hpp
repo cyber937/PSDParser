@@ -44,7 +44,7 @@ public:
     
     int colorMode();
     
-    void load(ifstream& inf);
+    void load(ifstream& inf, int& hight, int& width);
     
     void printData();
 };

@@ -19,9 +19,14 @@ string PSDParser::getJSONString(const char * filename) {
     ifstream file;
     file.open(filename, ios::binary | ios::in);
     
+    string jsonStr;
+    
+    int height, width;
+    string ICC_Profile, DPI;
+    
     // Header
     PSDHeader psdHeader;
-    psdHeader.load(file);
+    psdHeader.load(file, height, width);
     
     // Color Mode
     PSDColorMode psdColorMode;
@@ -29,9 +34,23 @@ string PSDParser::getJSONString(const char * filename) {
     
     // ImageRes
     PSDImgResPerser psdImgResPerser;
-    psdImgResPerser.startParse(file);
+    psdImgResPerser.startParse(file, ICC_Profile, DPI);
+    
+    printf("%s", jsonStr.c_str());
     
     // Layers
     PSDLayerParser psdLayerPasrse;
-    return psdLayerPasrse.getLayerJSON(file, psdHeader.version());
+    psdLayerPasrse.getLayerJSON(file, psdHeader.version(), jsonStr);
+    
+    string result;
+    
+    result = "{\"height\":" + to_string(height) + ",\n";
+    result = result + "\"width\":" + to_string(width) + ",\n";
+    result = result + "\"DPI\":" + DPI + ",\n";
+    if (!ICC_Profile.empty()) {
+        result = result + "\"ICC Profile\": \"" + ICC_Profile + "\",\n";
+    }
+    result = result + jsonStr;
+    
+    return result;
 }

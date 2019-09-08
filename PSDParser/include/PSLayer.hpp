@@ -46,8 +46,6 @@ public:
     
     int process(vector<PSDLayer> layerList, int count, int level);
     
-    //void makeJSON(string& jsonString);
-    
     void makeJSON(string& jsonString, int level = 0);
 };
 
@@ -57,7 +55,7 @@ class PSDLayerParser {
     
 public:
     
-    string getLayerJSON(ifstream& file, int version);
+    void getLayerJSON(ifstream& file, int version, string& jsonStr);
     
 };
 

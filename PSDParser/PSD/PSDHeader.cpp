@@ -38,7 +38,7 @@ int PSDHeader::colorMode() {
     return _colorMode;
 }
 
-void PSDHeader::load(ifstream& inf) {
+void PSDHeader::load(ifstream& inf, int& hight, int& width) {
     
     inf.read(&_sign[0], 4);
     
@@ -50,7 +50,11 @@ void PSDHeader::load(ifstream& inf) {
     
     _height =IntFromBinary(inf, 4);
     
+    hight = _height;
+    
     _width = IntFromBinary(inf, 4);
+    
+    width = _width;
     
     _depth = IntFromBinary(inf, 2);
     

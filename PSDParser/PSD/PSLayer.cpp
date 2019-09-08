@@ -99,7 +99,7 @@ void PSDLayer::makeJSON(string& jsonString, int level) {
 }
 
 
-string PSDLayerParser::getLayerJSON(ifstream& inf, int version) {
+void PSDLayerParser::getLayerJSON(ifstream& inf, int version, string& jsonStr) {
     
 //// Layer Section
     
@@ -309,22 +309,20 @@ string PSDLayerParser::getLayerJSON(ifstream& inf, int version) {
     
     root.makeJSON(jsonString);
     
-    jsonString = "{ \"layers\": \n" + jsonString;
+    jsonStr = "\"layers\": \n" + jsonString;
     
     if (fonts.size() > 0) {
-        jsonString = jsonString + ",\n\"fonts\" : [ ";
+        jsonStr = jsonStr + ",\n\"fonts\" : [ ";
         for (int i = 0; i < fonts.size(); i++) {
-            jsonString = jsonString + "\"" + fonts[i].c_str() + "\"";
+            jsonStr = jsonStr + "\"" + fonts[i].c_str() + "\"";
             if (i < fonts.size() - 1) {
-                jsonString = jsonString + ",";
+                jsonStr = jsonStr + ",";
             }
         }
         
-        jsonString = jsonString + "]";
+        jsonStr = jsonStr + "]";
     }
     
-    jsonString = jsonString + "}";
-    
-    return jsonString;
+    jsonStr = jsonStr + "}";
     
 }

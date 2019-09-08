@@ -25,7 +25,7 @@ void PSDImgResBlockHeder::load(ifstream& inf) {
     _ui = IntFromBinary(inf, 2);
 }
 
-void PSDImgResPerser::startParse(ifstream &inf) {
+void PSDImgResPerser::startParse(ifstream& inf, string& ICC_Profile, string& DPI) {
     
     length = IntFromBinary(inf, 4);
     
@@ -34,9 +34,9 @@ void PSDImgResPerser::startParse(ifstream &inf) {
     
     int lastPosition = length + int(inf.tellg());
     
-    streampos pos = inf.tellg();
+    //streampos pos = inf.tellg();
     
-    while (lastPosition !=  pos) {
+    while (lastPosition !=  inf.tellg()) {
         
         PSDImgResBlockHeder imgResBlockHeader;
         imgResBlockHeader.load(inf);
@@ -61,8 +61,63 @@ void PSDImgResPerser::startParse(ifstream &inf) {
         if (bufDataSize_int % 2 != 0)
             bufDataSize_int ++;
         
-        inf.seekg(bufDataSize_int, inf.cur);
-        
-        pos = inf.tellg();
+        if (imgResBlockHeader.ui() == 1005) {
+            streampos startPositionOfResourseBlock = inf.tellg();
+            streampos lastPotisionOfResourseBlock = bufDataSize_int + startPositionOfResourseBlock;
+            
+            DPI = to_string(IntFromBinary(inf, 2));
+            //jsonStr = jsonStr + "\"dpi\":" + "\"" + to_string(dpi) + "\",\n";
+            
+            //printf("DPI ... %i\n", dpi);
+            
+            inf.seekg(lastPotisionOfResourseBlock, inf.beg);
+            
+        } else if (imgResBlockHeader.ui() == 1039) {
+            streampos startPositionOfResourseBlock = inf.tellg();
+            streampos lastPotisionOfResourseBlock = bufDataSize_int + startPositionOfResourseBlock;
+            
+            char c;
+            
+            string profile;
+            
+            while (inf.get(c)) {
+                if (c == 'd') {
+                    string sign(3, ' ');
+                    inf.read(&sign[0], 3);
+                    if (!sign.compare("esc")) {
+                        
+                        int tagOffset = IntFromBinary(inf, 4);
+                        
+                        inf.seekg(int(startPositionOfResourseBlock) + tagOffset, inf.beg);
+                        
+                        int identifier = 4;
+                        int reserved = 4;
+                        
+                        inf.seekg(identifier + reserved, inf.cur);
+                        
+                        int profileDescriptionCount = IntFromBinary(inf, 4);
+                        
+                        string profileDescription(profileDescriptionCount - 1, ' ');
+                        inf.read(&profileDescription[0], profileDescriptionCount - 1);
+                        
+                        if (!profileDescription.empty()) {
+                            ICC_Profile = profileDescription;
+                            //jsonStr = jsonStr + "\"ICCProfile\" : " + "\"" + profileDescription + "\",\n";
+                        }
+                        
+                        
+                        
+                        break;
+                    }
+                }
+            }
+            
+            inf.seekg(lastPotisionOfResourseBlock, inf.beg);
+            
+        } else {
+            
+            inf.seekg(bufDataSize_int, inf.cur);
+            
+        }
     }
 }
