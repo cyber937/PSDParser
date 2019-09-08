@@ -59,7 +59,6 @@ int PSDLayer::process(vector<PSDLayer> layerList, int count, int level) {
 void PSDLayer::makeJSON(string& jsonString, int level) {
     
     if (level == 0) {
-        jsonString = jsonString + "{\"layer\":\n";
         jsonString = jsonString + "{\"name\": \"root\",\n \"children\":\n";
         jsonString = jsonString + "[\n";
     }
@@ -74,17 +73,15 @@ void PSDLayer::makeJSON(string& jsonString, int level) {
     
     for (int i = 0; i < this->children.size(); i++) {
         
-        jsonString = jsonString + pad1 + "{\"layer\":\n";
         jsonString = jsonString + pad2 + "{\"name\" : " + "\"" + this->children[i].name.c_str() + "\",\n" ;
-        jsonString = jsonString + pad2 + "\"type\" : " + to_string(this->children[i].type) + ",\n" ;
         
         if (this->children[i].children.size() == 0) {
-            jsonString = jsonString + pad2 + "\"children\" : []}\n";
+            jsonString = jsonString + pad2 + "\"children\" : []\n";
         } else {
             jsonString = jsonString + pad2 + "\"children\" :[\n";
             int nextLevel = level + 1;
             this->children[i].makeJSON(jsonString, nextLevel);
-            jsonString = jsonString + pad2 +"]}\n";
+            jsonString = jsonString + pad2 +"]\n";
         }
         
         if (i == this->children.size() - 1) {
@@ -96,7 +93,7 @@ void PSDLayer::makeJSON(string& jsonString, int level) {
     }
     
     if (level == 0) {
-        jsonString = jsonString + "]}}";
+        jsonString = jsonString + "]}";
     }
     
 }

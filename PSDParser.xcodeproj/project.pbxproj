@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		413014122303429F00C7F167 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413014112303429F00C7F167 /* main.cpp */; };
+		4149BE1F23216B7A00E0755C /* libicuuc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4149BE1E23216B7A00E0755C /* libicuuc.a */; };
+		4149BE2023216B8900E0755C /* libicuuc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4149BE1E23216B7A00E0755C /* libicuuc.a */; };
 		4159F15C231F10A0007D9F61 /* PSDParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416C2E7D2319DCBA0055FD69 /* PSDParser.cpp */; };
 		4159F15D231F10A2007D9F61 /* PSDHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 419DAE54230F079D0027D945 /* PSDHeader.cpp */; };
 		4159F15E231F10A5007D9F61 /* PSDColorMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 419DAE4C230F079D0027D945 /* PSDColorMode.cpp */; };
@@ -35,8 +37,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		410BD66B23247D5C005FFD95 /* version */ = {isa = PBXFileReference; lastKnownFileType = text; path = version; sourceTree = "<group>"; };
 		4130140E2303429F00C7F167 /* PSDParser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PSDParser; sourceTree = BUILT_PRODUCTS_DIR; };
 		413014112303429F00C7F167 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		4149BE1E23216B7A00E0755C /* libicuuc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicuuc.a; path = ../../../../../../../../../usr/local/Cellar/icu4c/64.2/lib/libicuuc.a; sourceTree = "<group>"; };
 		4159F158231F1070007D9F61 /* libPSDParserStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPSDParserStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		416C2E7D2319DCBA0055FD69 /* PSDParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PSDParser.cpp; sourceTree = "<group>"; };
 		416C2E7E2319DCBA0055FD69 /* PSDParser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PSDParser.hpp; sourceTree = "<group>"; };
@@ -57,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4149BE1F23216B7A00E0755C /* libicuuc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4149BE2023216B8900E0755C /* libicuuc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +81,7 @@
 			children = (
 				413014102303429F00C7F167 /* PSDParser */,
 				4130140F2303429F00C7F167 /* Products */,
+				4149BE1D23216B7A00E0755C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,11 +97,20 @@
 		413014102303429F00C7F167 /* PSDParser */ = {
 			isa = PBXGroup;
 			children = (
-				4163FEAD231F02E600147270 /* include */,
 				413014112303429F00C7F167 /* main.cpp */,
 				419DAE5C230F093E0027D945 /* PSD */,
+				4163FEAD231F02E600147270 /* include */,
+				410BD66B23247D5C005FFD95 /* version */,
 			);
 			path = PSDParser;
+			sourceTree = "<group>";
+		};
+		4149BE1D23216B7A00E0755C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4149BE1E23216B7A00E0755C /* libicuuc.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		4163FEAD231F02E600147270 /* include */ = {
@@ -287,7 +303,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = include;
+				HEADER_SEARCH_PATHS = (
+					include,
+					/usr/local/Cellar/icu4c/64.2/include,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -341,7 +360,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = include;
+				HEADER_SEARCH_PATHS = (
+					include,
+					/usr/local/Cellar/icu4c/64.2/include,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -354,6 +376,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GN274JY6Y2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/icu4c/64.2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -363,6 +389,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GN274JY6Y2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/icu4c/64.2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -373,6 +403,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GN274JY6Y2;
 				EXECUTABLE_PREFIX = lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/icu4c/64.2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -384,6 +418,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GN274JY6Y2;
 				EXECUTABLE_PREFIX = lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/icu4c/64.2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
